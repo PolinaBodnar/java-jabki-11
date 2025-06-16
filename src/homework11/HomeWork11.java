@@ -1,35 +1,33 @@
 package homework11;
 
-import java.io.*;
-import java.util.*;
+import homework11.exception.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeWork11 {
 
-    private static final List<Integer> ratings = new ArrayList<>();
+    private static List<Integer> ratings = new ArrayList<>();
 
-    public static Integer safeDivide(int a, int b) {
-        try {
-            return a / b;
-        } catch (ArithmeticException e) {
-            System.err.println("Деление на ноль запрещено");
-            return null;
+    public static int safeDivide(int a, int b) {
+        return b == 0 ? 0 : a / b;
+    }
+
+    public static void checkString(String str) {
+        if (str == null || str.trim().isEmpty()) {
+            throw new IllegalArgumentException("Строка не должна быть пустой");
         }
     }
 
-    public static void checkString(String s) {
-        if (s == null || s.trim().isEmpty()) {
-            throw new IllegalArgumentException("Строка не должна быть пустой или пробельной");
-        }
-    }
-
-    public static List<Integer> convertStringList(List<String> list) {
+    public static List<Integer> convertStringList(List<String> input) {
         List<Integer> result = new ArrayList<>();
-        for (String s : list) {
+        for (String s : input) {
             try {
                 result.add(Integer.parseInt(s));
-            } catch (NumberFormatException e) {
-                System.err.println("Ошибка преобразования строки в число: " + s);
-            }
+            } catch (NumberFormatException ignored) {}
         }
         return result;
     }
@@ -40,67 +38,47 @@ public class HomeWork11 {
         }
     }
 
-    public static void deposit(double amount) throws NegativeDepositException {
-        if (amount <= 0) {
-            throw new NegativeDepositException("Сумма депозита должна быть больше нуля");
+    public static void deposit(int amount) throws NegativeDepositException {
+        if (amount < 0) {
+            throw new NegativeDepositException("Сумма депозита не может быть отрицательной");
         }
     }
 
-    public static String getItem(String code) {
-        Map<String, String> items = Map.of("Блокнот", "Notebook", "Ручка", "Pen");
-        if (!items.containsKey(code)) {
-            throw new ItemNotFoundException("Товар с кодом '" + code + "' не найден");
+    public static String getItem(String name) throws ItemNotFoundException {
+        if (!"Альбом".equals(name)) {
+            throw new ItemNotFoundException("Товар не найден: " + name);
         }
-        return items.get(code);
+        return name;
     }
 
     public static void readFile(String path) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-            }
+        Files.readAllLines(Path.of(path));
+    }
+
+    public static void login(String user, String pass) throws Exception {
+        if (user == null || user.isEmpty() || pass == null || pass.isEmpty()) {
+            throw new Exception("Логин и пароль не должны быть пустыми");
         }
     }
 
-    public static void login(String username, String password) throws LoginFailedException {
-        if (username == null || username.isBlank() || password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Логин и пароль не могут быть пустыми");
-        }
-
-        if (!"admin".equals(username) || !"qwerty".equals(password)) {
-            throw new LoginFailedException("Неверный логин или пароль");
-        }
-    }
-
-    public static void transfer(double fromAccount, double toAccount, double amount)
-            throws InvalidTransferAmountException, InsufficientBalanceException {
+    public static void transfer(int from, int to, int amount) throws InvalidTransferAmountException, InsufficientBalanceException {
         if (amount <= 0) {
             throw new InvalidTransferAmountException("Сумма должна быть положительной");
         }
-        if (fromAccount < amount) {
+        if (from < amount) {
             throw new InsufficientBalanceException("Недостаточно средств");
         }
-        System.out.println("Перевод выполнен");
     }
 
-    public static void rateProduct(String input) throws InvalidRatingException {
-        int rating;
-        try {
-            rating = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("Некорректный формат рейтинга: должно быть число от 1 до 5");
-        }
-
+    public static void rateProduct(String ratingStr) throws Exception {
+        int rating = Integer.parseInt(ratingStr);
         if (rating < 1 || rating > 5) {
-            throw new InvalidRatingException("Рейтинг должен быть от 1 до 5");
+            throw new Exception("Рейтинг должен быть от 1 до 5");
         }
-
         ratings.add(rating);
-        System.out.println("Рейтинг сохранён: " + rating);
     }
 
     public static List<Integer> getRatings() {
-        return new ArrayList<>(ratings);
+        return ratings;
     }
 }
