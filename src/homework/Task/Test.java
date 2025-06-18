@@ -2,127 +2,145 @@ package homework.Task;
 
 import homework.exceptions.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
-public class Test {
+import java.util.List;
+
+class TaskTest {
 
     // 1. Безопасное деление
-    public static int safeDivide(int a, int b) {
-        if (b == 0) {
-            System.out.println("Деление на ноль невозможно.");
-            return 0;
-        }
-        return a / b;
+    @Test
+    void testSafeDivide_normal() {
+        Assertions.assertEquals(2, Test.safeDivide(10, 5));
+    }
+
+    @Test
+    void testSafeDivide_byZero() {
+        Assertions.assertEquals(0, Test.safeDivide(10, 0));
     }
 
     // 2. Проверка строки
-    public static void validateString(String input) {
-        if (input == null || input.trim().isEmpty()) {
-            throw new IllegalArgumentException("Строка не должна быть пустой или состоять из пробелов.");
-        }
+    @Test
+    void testValidateString_valid() {
+        Assertions.assertDoesNotThrow(() -> Test.validateString("Тест"));
+    }
+
+    @Test
+    void testValidateString_empty() {
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> Test.validateString("  "));
+        Assertions.assertTrue(e.getMessage().contains("не должна быть пустой"));
     }
 
     // 3. Преобразование строки в число
-    public static List<Integer> convertStringToNum(List<String> strings) {
-        List<Integer> result = new ArrayList<>();
-        for (String s : strings) {
-            try {
-                result.add(Integer.parseInt(s));
-            } catch (NumberFormatException e) {
-                System.out.printf("Невозможно преобразовать '%s' в число.%n", s);
-            }
-        }
-        return result;
+    @Test
+    void testConvertStringToNum_valid() {
+        List<String> input = List.of("1", "2", "3");
+        List<Integer> result = Test.convertStringToNum(input);
+        Assertions.assertEquals(List.of(1, 2, 3), result);
     }
 
-    // 4. Валидация возраста
-    public static int setAge(int age) {
-        if (age < 0) {
-            throw new IllegalArgumentException("Возраст не может быть отрицательным.");
-        }
-        System.out.printf("Возраст установлен: %d%n", age);
-        return age;
+    @Test
+    void testConvertStringToNum_withInvalid() {
+        List<String> input = List.of("1", "abc", "3");
+        List<Integer> result = Test.convertStringToNum(input);
+        Assertions.assertEquals(List.of(1, 3), result);
+    }
+
+    // 4. Проверка возраста
+    @Test
+    void testSetAge_valid() {
+        Assertions.assertEquals(20, Test.setAge(20));
+    }
+
+    @Test
+    void testSetAge_negative() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Test.setAge(-5));
     }
 
     // 5. Депозит
-    public static void deposit(int amount) throws BadDepositException {
-        if (amount <= 0) {
-            throw new BadDepositException("Сумма депозита должна быть положительной.");
-        }
-        System.out.printf("Депозит успешен: %d%n", amount);
+    @Test
+    void testDeposit_valid() throws BadDepositException {
+        Assertions.assertDoesNotThrow(() -> Test.deposit(100));
     }
 
-    // 6. Поиск товара по коду
-    public static String getItem(String code) throws ItemNotFoundException {
-        Map<String, String> items = Map.of(
-                "123", "Телефон",
-                "456", "Ноутбук",
-                "789", "Планшет"
-        );
-        if (!items.containsKey(code)) {
-            throw new ItemNotFoundException();
-        }
-        return items.get(code);
+    @Test
+    void testDeposit_invalid() {
+        Assertions.assertThrows(BadDepositException.class, () -> Test.deposit(0));
+    }
+
+    // 6. Поиск товара
+    @Test
+    void testGetItem_valid() throws ItemNotFoundException {
+        Assertions.assertEquals("Телефон", Test.getItem("123"));
+    }
+
+    @Test
+    void testGetItem_invalid() {
+        Assertions.assertThrows(ItemNotFoundException.class, () -> Test.getItem("000"));
     }
 
     // 7. Чтение файла
-    public static List<String> readFile(String filename) {
-        try {
-            return Files.readAllLines(Path.of(filename));
-        } catch (IOException e) {
-            System.out.println("Ошибка чтения файла: " + e.getMessage());
-            return Collections.emptyList();
-        }
+    @Test
+    void testReadFile_nonexistent() {
+        List<String> lines = Test.readFile("non_existing.txt");
+        Assertions.assertTrue(lines.isEmpty());
     }
 
-    // 8. Система логина
-    public static void login(String username, String password) throws LoginException {
-        if (!"admin".equals(username) || !"1234".equals(password)) {
-            throw new LoginException();
-        }
-        System.out.println("Успешный вход.");
+    // 8. Логин
+    @Test
+    void testLogin_valid() {
+        Assertions.assertDoesNotThrow(() -> Test.login("admin", "1234"));
     }
 
-    // 9. Перевод средств
-    public static double[] transfer(double from, double to, double amount)
-            throws TransferRuleViolationException, NotEnoughFundsException {
-        if (amount <= 0) {
-            throw new TransferRuleViolationException("Сумма перевода должна быть положительной.");
-        }
-        if (from < amount) {
-            throw new NotEnoughFundsException("Недостаточно средств для перевода.");
-        }
-        from -= amount;
-        to += amount;
-        System.out.printf("Перевод %.2f завершён успешно.%n", amount);
-        return new double[]{from, to};
+    @Test
+    void testLogin_invalid() {
+        Assertions.assertThrows(LoginFailedException.class, () -> Test.login("user", "wrong"));
     }
 
-    // 10. Оценка товара (перегрузка)
-    private static final List<Integer> ratings = new ArrayList<>();
-
-    public static String rateProduct(int rating) throws InvalidRatingException {
-        if (rating < 1 || rating > 5) {
-            throw new InvalidRatingException(rating);
-        }
-        ratings.add(rating);
-        return String.format("Рейтинг успешно сохранён: %d", rating);
+    // 9. Перевод
+    @Test
+    void testTransfer_valid() throws TransferRuleViolationException, NotEnoughFundsException {
+        double[] result = Test.transfer(100.0, 50.0, 20.0);
+        Assertions.assertEquals(80.0, result[0]);
+        Assertions.assertEquals(70.0, result[1]);
     }
 
-    public static String rateProduct(String ratingStr) {
-        try {
-            int rating = Integer.parseInt(ratingStr);
-            return rateProduct(rating);
-        } catch (NumberFormatException e) {
-            return String.format("Рейтинг '%s' не является числом", ratingStr);
-        } catch (InvalidRatingException e) {
-            return e.getMessage();
-        }
+    @Test
+    void testTransfer_notEnoughFunds() {
+        Assertions.assertThrows(NotEnoughFundsException.class, () -> Test.transfer(10.0, 50.0, 20.0));
+    }
+
+    @Test
+    void testTransfer_invalidAmount() {
+        Assertions.assertThrows(TransferRuleViolationException.class, () -> Test.transfer(100.0, 50.0, -5));
+    }
+
+    // 10. Оценка товара
+    @Test
+    void testRateProduct_validInt() throws InvalidRatingException {
+        String response = Test.rateProduct(5);
+        Assertions.assertTrue(response.contains("успешно"));
+    }
+
+    @Test
+    void testRateProduct_invalidInt() {
+        Assertions.assertThrows(InvalidRatingException.class, () -> Test.rateProduct(0));
+    }
+
+    @Test
+    void testRateProduct_validString() {
+        String response = Test.rateProduct("4");
+        Assertions.assertTrue(response.contains("успешно"));
+    }
+
+    @Test
+    void testRateProduct_invalidString() {
+        String response = Test.rateProduct("abc");
+        Assertions.assertTrue(response.contains("не является числом"));
+    }
+
+    @Test
+    void testRateProduct_outOfRangeString() {
+        String response = Test.rateProduct("6");
+        Assertions.assertTrue(response.contains("Недопустимый рейтинг"));
     }
 }
