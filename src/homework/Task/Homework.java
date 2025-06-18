@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class Test {
+class Test {
 
     // 1. Безопасное деление
     public static int safeDivide(int a, int b) {
