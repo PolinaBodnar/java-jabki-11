@@ -1,13 +1,16 @@
-package homework.Tests;
+package homework.Task;
 
 import homework.exceptions.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-public class Tests {
+public class Test {
 
     // 1. Безопасное деление
     public static int safeDivide(int a, int b) {
@@ -56,14 +59,14 @@ public class Tests {
     }
 
     // 6. Поиск товара по коду
-    public static String getItem(String code) throws UnknownProductCodeException {
+    public static String getItem(String code) throws ItemNotFoundException {
         Map<String, String> items = Map.of(
                 "123", "Телефон",
                 "456", "Ноутбук",
                 "789", "Планшет"
         );
         if (!items.containsKey(code)) {
-            throw new UnknownProductCodeException("Товар с таким кодом не найден.");
+            throw new ItemNotFoundException();
         }
         return items.get(code);
     }
@@ -81,7 +84,7 @@ public class Tests {
     // 8. Система логина
     public static void login(String username, String password) throws LoginException {
         if (!"admin".equals(username) || !"1234".equals(password)) {
-            throw new LoginException("Неверное имя пользователя или пароль.");
+            throw new LoginException();
         }
         System.out.println("Успешный вход.");
     }
@@ -102,21 +105,24 @@ public class Tests {
     }
 
     // 10. Оценка товара (перегрузка)
+    private static final List<Integer> ratings = new ArrayList<>();
+
+    public static String rateProduct(int rating) throws InvalidRatingException {
+        if (rating < 1 || rating > 5) {
+            throw new InvalidRatingException(rating);
+        }
+        ratings.add(rating);
+        return String.format("Рейтинг успешно сохранён: %d", rating);
+    }
+
     public static String rateProduct(String ratingStr) {
         try {
             int rating = Integer.parseInt(ratingStr);
             return rateProduct(rating);
         } catch (NumberFormatException e) {
-            return "Некорректный формат оценки.";
-        } catch (InvalidScoreException e) {
-            return "Ошибка: " + e.getMessage();
+            return String.format("Рейтинг '%s' не является числом", ratingStr);
+        } catch (InvalidRatingException e) {
+            return e.getMessage();
         }
-    }
-
-    public static String rateProduct(int rating) throws InvalidScoreException {
-        if (rating < 1 || rating > 5) {
-            throw new InvalidScoreException("Оценка должна быть от 1 до 5.");
-        }
-        return "Оценка принята: " + rating;
     }
 }

@@ -8,4 +8,7 @@ public class UnknownProductCodeException extends Exception {
     public UnknownProductCodeException(String message) {
         super(message);
     }
+
+    public static class InvalidRatingException extends Exception {
+    }
 }
