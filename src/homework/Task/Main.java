@@ -1,13 +1,16 @@
 package homework.Task;
 
-import homework.exceptions.*;
+import homework.exceptions.InvalidRatingException;
+import homework.exceptions.ItemNotFoundException;
+import homework.exceptions.LoginException;
+import homework.exceptions.NegativeDepositException;
+import homework.exceptions.NotEnoughFundsException;
+import homework.exceptions.TransferRuleViolationException;
 
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // Примеры запуска методов из Test с обработкой исключений
-
         // 1. Безопасное деление
         System.out.println("1. Безопасное деление:");
         System.out.println("Результат: " + Test.safeDivide(1, 0));
@@ -49,17 +52,17 @@ public class Main {
         System.out.println("5. Собственное исключение: депозит");
         try {
             Test.deposit(-1);
-        } catch (BadDepositException e) {
+        } catch (NegativeDepositException e) {
             System.out.printf("Ошибка: %s%n", e.getMessage());
         }
         try {
             Test.deposit(0);
-        } catch (BadDepositException e) {
+        } catch (NegativeDepositException e) {
             System.out.printf("Ошибка: %s%n", e.getMessage());
         }
         try {
             Test.deposit(300);
-        } catch (BadDepositException e) {
+        } catch (NegativeDepositException e) {
             System.out.printf("Ошибка: %s%n", e.getMessage());
         }
         System.out.println();
@@ -124,13 +127,13 @@ public class Main {
 
         // 10. Сервис оценки товара
         System.out.println("10. Сервис оценки товара:");
-        System.out.println(Test.rateProduct("5"));
-        System.out.println(Test.rateProduct("abc"));
-        System.out.println(Test.rateProduct("7"));
-        System.out.println(Test.rateProduct("0"));
+        System.out.println(Test.rateProduct("5"));     // OK
+        System.out.println(Test.rateProduct("abc"));   // NumberFormatException внутри метода
+        System.out.println(Test.rateProduct("7"));     // InvalidRatingException внутри метода
+        System.out.println(Test.rateProduct("0"));     // InvalidRatingException внутри метода
         try {
-            System.out.println(Test.rateProduct(3));
-            System.out.println(Test.rateProduct(6));
+            System.out.println(Test.rateProduct(3));   // OK
+            System.out.println(Test.rateProduct(6));   // InvalidRatingException
         } catch (InvalidRatingException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }

@@ -1,6 +1,11 @@
 package homework.Task;
 
-import homework.exceptions.*;
+import homework.exceptions.InvalidRatingException;
+import homework.exceptions.ItemNotFoundException;
+import homework.exceptions.LoginException;
+import homework.exceptions.NegativeDepositException;
+import homework.exceptions.NotEnoughFundsException;
+import homework.exceptions.TransferRuleViolationException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-class Test {
+class Case {
 
     // 1. Безопасное деление
     public static int safeDivide(int a, int b) {
@@ -51,9 +56,9 @@ class Test {
     }
 
     // 5. Депозит
-    public static void deposit(int amount) throws BadDepositException {
+    public static void deposit(int amount) throws NegativeDepositException {
         if (amount <= 0) {
-            throw new BadDepositException("Сумма депозита должна быть положительной.");
+            throw new NegativeDepositException("Сумма депозита должна быть положительной.");
         }
         System.out.printf("Депозит успешен: %d%n", amount);
     }
@@ -104,7 +109,7 @@ class Test {
         return new double[]{from, to};
     }
 
-    // 10. Оценка товара (перегрузка)
+    // 10. Оценка товара
     private static final List<Integer> ratings = new ArrayList<>();
 
     public static String rateProduct(int rating) throws InvalidRatingException {
