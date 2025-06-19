@@ -113,23 +113,18 @@ class Case {
     }
 
     // Метод с int
-    public static String rateProduct(int rating) throws InvalidRatingException {
-        if (rating < 1 || rating > 5) {
-            throw new InvalidRatingException(rating);
-        }
-        ratings.add(rating);
-        return "Рейтинг успешно сохранён: " + rating;
-    }
-
-    // Перегруженный метод со String
-    public static String rateProduct(String ratingStr) {
+    public static String rateProductFromString(String ratingStr) {
         try {
             int rating = Integer.parseInt(ratingStr);
-            return rateProduct(rating);
+            if (rating < 1 || rating > 7) {
+                return "Недопустимый рейтинг: " + rating;
+            }
+            ratings.add(rating);
+            return "Рейтинг успешно сохранён: " + rating;
         } catch (NumberFormatException e) {
             return "Рейтинг '" + ratingStr + "' не является числом";
-        } catch (InvalidRatingException e) {
-            return e.getMessage();
         }
     }
+
 }
+
