@@ -2,7 +2,7 @@ package homework.exceptions;
 
 public class TransferRuleViolationException extends Exception {
     public TransferRuleViolationException() {
-        super("Нарушены правила перевода.");
+        super("Сумма перевода должна быть положительной.");
     }
 
     public TransferRuleViolationException(String message) {

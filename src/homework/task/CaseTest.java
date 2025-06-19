@@ -1,6 +1,12 @@
-package homework.Task;
+package homework.task;
 
-import homework.exceptions.*;
+import homework.exceptions.InvalidRatingException;
+import homework.exceptions.ItemNotFoundException;
+import homework.exceptions.LoginException;
+import homework.exceptions.NegativeDepositException;
+import homework.exceptions.NotEnoughFundsException;
+import homework.exceptions.TransferRuleViolationException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -59,7 +65,7 @@ class CaseTest {
 
     // 5. Депозит
     @Test
-    void testDeposit_valid() throws NegativeDepositException {
+    void testDeposit_valid() {
         Assertions.assertDoesNotThrow(() -> Case.deposit(100));
     }
 

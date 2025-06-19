@@ -1,8 +1,8 @@
-package homework.Task;
+package homework.task;
 
 import homework.exceptions.InvalidRatingException;
 import homework.exceptions.ItemNotFoundException;
-import homework.exceptions.LoginException;
+import homework.exceptions.LoginFailedException;
 import homework.exceptions.NegativeDepositException;
 import homework.exceptions.NotEnoughFundsException;
 import homework.exceptions.TransferRuleViolationException;
@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 class Case {
+
+    // 10. Оценка товара - константа (статическое поле)
+    private static final List<Integer> ratings = new ArrayList<>();
 
     // 1. Безопасное деление
     public static int safeDivide(int a, int b) {
@@ -87,9 +90,9 @@ class Case {
     }
 
     // 8. Система логина
-    public static void login(String username, String password) throws LoginException {
+    public static void login(String username, String password) throws LoginFailedException {
         if (!"admin".equals(username) || !"1234".equals(password)) {
-            throw new LoginException();
+            throw new LoginFailedException();
         }
         System.out.println("Успешный вход.");
     }
@@ -109,15 +112,24 @@ class Case {
         return new double[]{from, to};
     }
 
-    // 10. Оценка товара
-    private static final List<Integer> ratings = new ArrayList<>();
-
+    // Метод с int
     public static String rateProduct(int rating) throws InvalidRatingException {
         if (rating < 1 || rating > 5) {
             throw new InvalidRatingException(rating);
         }
         ratings.add(rating);
-        return String.format("Рейтинг успешно сохранён: %d", rating);
+        return "Рейтинг успешно сохранён: " + rating;
+    }
 
+    // Перегруженный метод со String
+    public static String rateProduct(String ratingStr) {
+        try {
+            int rating = Integer.parseInt(ratingStr);
+            return rateProduct(rating);
+        } catch (NumberFormatException e) {
+            return "Рейтинг '" + ratingStr + "' не является числом";
+        } catch (InvalidRatingException e) {
+            return e.getMessage();
+        }
     }
 }
