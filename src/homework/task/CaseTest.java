@@ -1,10 +1,9 @@
 package homework.task;
 
 import homework.exception.InvalidRatingException;
-import homework.exception.InvalidTransferAmountException;
-import homework.exception.LoginException;
 import homework.exception.ItemNotFoundException;
 import homework.exception.NegativeDepositException;
+import homework.exception.LoginException;
 
 import org.junit.jupiter.api.Test;
 

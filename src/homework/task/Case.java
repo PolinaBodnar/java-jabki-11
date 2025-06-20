@@ -1,6 +1,12 @@
 package homework.task;
 
-import homework.exception.*;
+import homework.exception.InvalidRatingException;
+import homework.exception.InvalidTransferAmountException;
+import homework.exception.InsufficientBalanceException;
+import homework.exception.ItemNotFoundException;
+import homework.exception.NegativeDepositException;
+import homework.exception.LoginException;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,11 +56,11 @@ public class Case {
     }
 
     // 5. Депозит
-    public static void deposit(int amount) throws NegativeDepositException {
+    public static String deposit(int amount) throws NegativeDepositException {
         if (amount <= 0) {
             throw new NegativeDepositException("Сумма депозита должна быть положительной.");
         }
-        System.out.printf("Депозит успешен: %d%n", amount);
+        return String.format("Депозит успешен: %d", amount);
     }
 
     // 6. Поиск товара по коду
@@ -81,10 +87,11 @@ public class Case {
     }
 
     // 8. Система логина
-    public static void login(String username, String password) throws LoginException {
+    public static String login(String username, String password) throws LoginException {
         if (!"admin".equals(username) || !"1234".equals(password)) {
             throw new LoginException("Неверный логин или пароль.");
         }
+        return "Успешный вход";
     }
 
     // 9. Перевод средств
@@ -105,22 +112,39 @@ public class Case {
     // 10. Сервис оценки товара
     private static final List<Integer> ratings = new ArrayList<>();
 
+    /**
+     * Оценивает продукт по числовому рейтингу.
+     * Возвращает сообщение об успехе.
+     * Бросает исключение, если рейтинг не в диапазоне 1–5.
+     *
+     * @param rating рейтинг продукта
+     * @return сообщение об успешном сохранении
+     * @throws InvalidRatingException если рейтинг вне диапазона
+     */
     public static String rateProduct(int rating) throws InvalidRatingException {
         if (rating < 1 || rating > 5) {
-            throw new InvalidRatingException(rating);
+            throw new InvalidRatingException("Рейтинг должен быть от 1 до 5");
         }
         ratings.add(rating);
         return String.format("Рейтинг успешно сохранён: %d", rating);
     }
 
+    /**
+     * Оценивает продукт по строковому рейтингу.
+     * Преобразует строку в число и вызывает метод rateProduct(int).
+     * Возвращает сообщения об ошибках, если вход некорректен.
+     *
+     * @param ratingStr рейтинг в виде строки
+     * @return сообщение об успехе или ошибке
+     */
     public static String rateProduct(String ratingStr) {
         try {
             int rating = Integer.parseInt(ratingStr);
             return rateProduct(rating);
         } catch (NumberFormatException e) {
-            return String.format("Рейтинг %s не является числом", ratingStr);
+            return "Ошибка: рейтинг не является числом";
         } catch (InvalidRatingException e) {
-            return e.getMessage();
+            return "Ошибка: " + e.getMessage();
         }
     }
 }

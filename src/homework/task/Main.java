@@ -5,8 +5,8 @@ import homework.exception.InvalidTransferAmountException;
 import homework.exception.InsufficientBalanceException;
 import homework.exception.ItemNotFoundException;
 import homework.exception.NegativeDepositException;
+import homework.exception.LoginException;
 
-import javax.security.auth.login.LoginException;
 import java.util.List;
 
 public class Main {
@@ -51,18 +51,17 @@ public class Main {
         // 5. Депозит с собственным исключением
         System.out.println("5. Собственное исключение: депозит");
         try {
-            Case.deposit(-1);
+            System.out.println(Case.deposit(-1));
         } catch (NegativeDepositException e) {
             System.out.printf("Ошибка: %s%n", e.getMessage());
         }
         try {
-            Case.deposit(0);
+            System.out.println(Case.deposit(0));
         } catch (NegativeDepositException e) {
             System.out.printf("Ошибка: %s%n", e.getMessage());
         }
         try {
-            Case.deposit(300);
-            System.out.println("Депозит принят.");
+            System.out.println(Case.deposit(300));
         } catch (NegativeDepositException e) {
             System.out.printf("Ошибка: %s%n", e.getMessage());
         }
@@ -85,7 +84,7 @@ public class Main {
         // 7. Чтение из файла
         System.out.println("7. Чтение из файла:");
         List<String> lines = Case.readFile("file.txt");
-        if (lines != null) {
+        if (!lines.isEmpty()) {
             System.out.printf("Прочитанные строки: %s%n%n", lines);
         } else {
             System.out.println("Файл не найден или ошибка при чтении.\n");
@@ -94,13 +93,12 @@ public class Main {
         // 8. Система логина
         System.out.println("8. Система логина:");
         try {
-            Case.login("admin", "pass");
+            System.out.println(Case.login("admin", "pass"));
         } catch (LoginException e) {
             System.out.printf("Ошибка: %s%n", e.getMessage());
         }
         try {
-            Case.login("admin", "1234");
-            System.out.println("Успешный вход.");
+            System.out.println(Case.login("admin", "1234"));
         } catch (LoginException e) {
             System.out.printf("Ошибка: %s%n", e.getMessage());
         }
@@ -145,11 +143,13 @@ public class Main {
         System.out.println(Case.rateProduct("abc"));
         System.out.println(Case.rateProduct("7"));
         System.out.println(Case.rateProduct("0"));
+
+// Демонстрация использования с int
         try {
-            System.out.println(Case.rateProduct(3));
-            System.out.println(Case.rateProduct(6));
+            String result = Case.rateProduct(5);
+            System.out.println(result);
         } catch (InvalidRatingException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }
