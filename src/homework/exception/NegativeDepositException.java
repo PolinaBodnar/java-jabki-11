@@ -1,4 +1,4 @@
-package homework.exceptions;
+package homework.exception;
 
 public class NegativeDepositException extends Exception {
     public NegativeDepositException(String message) {

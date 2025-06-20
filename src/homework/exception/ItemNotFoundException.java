@@ -1,4 +1,4 @@
-package homework.exceptions;
+package homework.exception;
 
 public class ItemNotFoundException extends Exception {
     public ItemNotFoundException() {

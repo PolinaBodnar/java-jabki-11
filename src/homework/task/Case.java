@@ -1,11 +1,6 @@
 package homework.task;
 
-import homework.exceptions.InvalidRatingException;
-import homework.exceptions.ItemNotFoundException;
-import homework.exceptions.LoginFailedException;
-import homework.exceptions.NegativeDepositException;
-import homework.exceptions.NotEnoughFundsException;
-import homework.exceptions.TransferRuleViolationException;
+import homework.exception.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,10 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-class Case {
-
-    // 10. Оценка товара - константа (статическое поле)
-    private static final List<Integer> ratings = new ArrayList<>();
+public class Case {
 
     // 1. Безопасное деление
     public static int safeDivide(int a, int b) {
@@ -54,7 +46,6 @@ class Case {
         if (age < 0) {
             throw new IllegalArgumentException("Возраст не может быть отрицательным.");
         }
-        System.out.printf("Возраст установлен: %d%n", age);
         return age;
     }
 
@@ -74,7 +65,7 @@ class Case {
                 "789", "Планшет"
         );
         if (!items.containsKey(code)) {
-            throw new ItemNotFoundException();
+            throw new ItemNotFoundException("Товар не найден");
         }
         return items.get(code);
     }
@@ -90,21 +81,20 @@ class Case {
     }
 
     // 8. Система логина
-    public static void login(String username, String password) throws LoginFailedException {
+    public static void login(String username, String password) throws LoginException {
         if (!"admin".equals(username) || !"1234".equals(password)) {
-            throw new LoginFailedException();
+            throw new LoginException("Неверный логин или пароль.");
         }
-        System.out.println("Успешный вход.");
     }
 
     // 9. Перевод средств
     public static double[] transfer(double from, double to, double amount)
-            throws TransferRuleViolationException, NotEnoughFundsException {
+            throws InvalidTransferAmountException, InsufficientBalanceException {
         if (amount <= 0) {
-            throw new TransferRuleViolationException("Сумма перевода должна быть положительной.");
+            throw new InvalidTransferAmountException("Сумма перевода должна быть положительной.");
         }
         if (from < amount) {
-            throw new NotEnoughFundsException("Недостаточно средств для перевода.");
+            throw new InsufficientBalanceException("Недостаточно средств для перевода.");
         }
         from -= amount;
         to += amount;
@@ -112,19 +102,25 @@ class Case {
         return new double[]{from, to};
     }
 
-    // Метод с int
-    public static String rateProductFromString(String ratingStr) {
-        try {
-            int rating = Integer.parseInt(ratingStr);
-            if (rating < 1 || rating > 7) {
-                return "Недопустимый рейтинг: " + rating;
-            }
-            ratings.add(rating);
-            return "Рейтинг успешно сохранён: " + rating;
-        } catch (NumberFormatException e) {
-            return "Рейтинг '" + ratingStr + "' не является числом";
+    // 10. Сервис оценки товара
+    private static final List<Integer> ratings = new ArrayList<>();
+
+    public static String rateProduct(int rating) throws InvalidRatingException {
+        if (rating < 1 || rating > 5) {
+            throw new InvalidRatingException(rating);
         }
+        ratings.add(rating);
+        return String.format("Рейтинг успешно сохранён: %d", rating);
     }
 
+    public static String rateProduct(String ratingStr) {
+        try {
+            int rating = Integer.parseInt(ratingStr);
+            return rateProduct(rating);
+        } catch (NumberFormatException e) {
+            return String.format("Рейтинг %s не является числом", ratingStr);
+        } catch (InvalidRatingException e) {
+            return e.getMessage();
+        }
+    }
 }
-

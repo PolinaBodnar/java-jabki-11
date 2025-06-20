@@ -1,12 +1,12 @@
 package homework.task;
 
-import homework.exceptions.InvalidRatingException;
-import homework.exceptions.ItemNotFoundException;
-import homework.exceptions.LoginException;
-import homework.exceptions.NegativeDepositException;
-import homework.exceptions.NotEnoughFundsException;
-import homework.exceptions.TransferRuleViolationException;
+import homework.exception.InvalidRatingException;
+import homework.exception.InvalidTransferAmountException;
+import homework.exception.InsufficientBalanceException;
+import homework.exception.ItemNotFoundException;
+import homework.exception.NegativeDepositException;
 
+import javax.security.auth.login.LoginException;
 import java.util.List;
 
 public class Main {
@@ -68,7 +68,6 @@ public class Main {
         }
         System.out.println();
 
-
         // 6. Поиск товара по коду
         System.out.println("6. Поиск товара по коду:");
         try {
@@ -86,7 +85,11 @@ public class Main {
         // 7. Чтение из файла
         System.out.println("7. Чтение из файла:");
         List<String> lines = Case.readFile("file.txt");
-        System.out.printf("Прочитанные строки: %s%n%n", lines);
+        if (lines != null) {
+            System.out.printf("Прочитанные строки: %s%n%n", lines);
+        } else {
+            System.out.println("Файл не найден или ошибка при чтении.\n");
+        }
 
         // 8. Система логина
         System.out.println("8. Система логина:");
@@ -111,32 +114,40 @@ public class Main {
             double[] res = Case.transfer(from, to, 30.0);
             from = res[0];
             to = res[1];
-            Case.transfer(from, to, 200.0);
-        } catch (TransferRuleViolationException | NotEnoughFundsException e) {
-            System.out.printf("Ошибка: %s%n", e.getMessage());
+        } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
+            System.out.println("Ошибка: " + e.getMessage());
         }
+
+        try {
+            Case.transfer(from, to, 200.0);
+        } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+
         try {
             Case.transfer(from, to, 0.0);
-        } catch (TransferRuleViolationException | NotEnoughFundsException e) {
-            System.out.printf("Ошибка: %s%n", e.getMessage());
+        } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
+            System.out.println("Ошибка: " + e.getMessage());
         }
+
         try {
             Case.transfer(from, to, -1.0);
-        } catch (TransferRuleViolationException | NotEnoughFundsException e) {
-            System.out.printf("Ошибка: %s%n", e.getMessage());
+        } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
+            System.out.println("Ошибка: " + e.getMessage());
         }
+
         System.out.printf("Баланс отправителя: %.2f%n", from);
         System.out.printf("Баланс получателя: %.2f%n%n", to);
 
         // 10. Сервис оценки товара
         System.out.println("10. Сервис оценки товара:");
-        System.out.println(Case.rateProduct("5"));     // OK
-        System.out.println(Case.rateProduct("abc"));   // NumberFormatException внутри метода
-        System.out.println(Case.rateProduct("7"));     // InvalidRatingException внутри метода
-        System.out.println(Case.rateProduct("0"));     // InvalidRatingException внутри метода
+        System.out.println(Case.rateProduct("5"));
+        System.out.println(Case.rateProduct("abc"));
+        System.out.println(Case.rateProduct("7"));
+        System.out.println(Case.rateProduct("0"));
         try {
-            System.out.println(Case.rateProduct(3));   // OK
-            System.out.println(Case.rateProduct(6));   // InvalidRatingException
+            System.out.println(Case.rateProduct(3));
+            System.out.println(Case.rateProduct(6));
         } catch (InvalidRatingException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
