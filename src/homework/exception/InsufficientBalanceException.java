@@ -1,7 +1,7 @@
 package homework.exception;
 
 public class InsufficientBalanceException extends Exception {
-  public InsufficientBalanceException(String message) {
-    super(message);
+  public InsufficientBalanceException(double balance, double required) {
+    super("Недостаточно средств: баланс " + balance + ", требуется " + required);
   }
 }

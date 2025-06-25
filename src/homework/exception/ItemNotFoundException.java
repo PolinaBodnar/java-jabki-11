@@ -1,7 +1,7 @@
 package homework.exception;
 
 public class ItemNotFoundException extends Exception {
-    public ItemNotFoundException() {
-        super("Товар с данным кодом не найден.");
+    public ItemNotFoundException(String code) {
+        super("Товар с кодом '" + code + "' не найден.");
     }
 }

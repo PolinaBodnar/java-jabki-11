@@ -54,7 +54,7 @@ class CaseTest {
     // 4. Проверка возраста
     @Test
     void testSetAge_valid() {
-        assertEquals(20, Case.setAge(20));
+        assertEquals("Возраст установлен: 20", Case.setAge(20));
     }
 
     @Test
@@ -122,8 +122,8 @@ class CaseTest {
 
     @Test
     void testRateProduct_invalidString() {
-        String response = Case.rateProduct("abc");
-        assertTrue(response.contains("Ошибка:"));
+        String response = Case.rateProduct("ABC");
+        assertTrue(response.contains("не является числом"));
     }
 
     @Test

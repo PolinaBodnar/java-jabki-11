@@ -40,44 +40,33 @@ public class Main {
         // 4. Простая валидация возраста
         System.out.println("4. Простая валидация возраста:");
         try {
-            System.out.println("Возраст: " + Case.setAge(0));
-            System.out.println("Возраст: " + Case.setAge(25));
-            System.out.println("Возраст: " + Case.setAge(-1));
+            System.out.println(Case.setAge(0));
+            System.out.println(Case.setAge(25));
+            System.out.println(Case.setAge(-1)); // вызовет исключение
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
         System.out.println();
 
         // 5. Депозит с собственным исключением
-        System.out.println("5. Собственное исключение: депозит");
-        try {
-            System.out.println(Case.deposit(-1));
-        } catch (NegativeDepositException e) {
-            System.out.printf("Ошибка: %s%n", e.getMessage());
-        }
-        try {
-            System.out.println(Case.deposit(0));
-        } catch (NegativeDepositException e) {
-            System.out.printf("Ошибка: %s%n", e.getMessage());
-        }
-        try {
-            System.out.println(Case.deposit(300));
-        } catch (NegativeDepositException e) {
-            System.out.printf("Ошибка: %s%n", e.getMessage());
+        System.out.println("5. Депозит:");
+        for (int amount : new int[]{-1, 0, 300}) {
+            try {
+                System.out.println(Case.deposit(amount));
+            } catch (NegativeDepositException e) {
+                System.out.printf("Ошибка: %s%n", e.getMessage());
+            }
         }
         System.out.println();
 
         // 6. Поиск товара по коду
         System.out.println("6. Поиск товара по коду:");
-        try {
-            System.out.printf("Товар с кодом 123: %s%n", Case.getItem("123"));
-        } catch (ItemNotFoundException e) {
-            System.out.println("Ошибка: " + e.getMessage());
-        }
-        try {
-            System.out.printf("Товар с кодом 999: %s%n", Case.getItem("999"));
-        } catch (ItemNotFoundException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+        for (String code : List.of("123", "999")) {
+            try {
+                System.out.printf("Товар с кодом %s: %s%n", code, Case.getItem(code));
+            } catch (ItemNotFoundException e) {
+                System.out.println("Ошибка: " + e.getMessage());
+            }
         }
         System.out.println();
 
@@ -92,15 +81,12 @@ public class Main {
 
         // 8. Система логина
         System.out.println("8. Система логина:");
-        try {
-            System.out.println(Case.login("admin", "pass"));
-        } catch (LoginException e) {
-            System.out.printf("Ошибка: %s%n", e.getMessage());
-        }
-        try {
-            System.out.println(Case.login("admin", "1234"));
-        } catch (LoginException e) {
-            System.out.printf("Ошибка: %s%n", e.getMessage());
+        for (String[] loginData : List.of(new String[]{"admin", "pass"}, new String[]{"admin", "1234"})) {
+            try {
+                System.out.println(Case.login(loginData[0], loginData[1]));
+            } catch (LoginException e) {
+                System.out.printf("Ошибка: %s%n", e.getMessage());
+            }
         }
         System.out.println();
 
@@ -108,48 +94,26 @@ public class Main {
         System.out.println("9. Банковский перевод:");
         double from = 100.0;
         double to = 50.0;
-        try {
-            double[] res = Case.transfer(from, to, 30.0);
-            from = res[0];
-            to = res[1];
-        } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
-            System.out.println("Ошибка: " + e.getMessage());
-        }
 
-        try {
-            Case.transfer(from, to, 200.0);
-        } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
-            System.out.println("Ошибка: " + e.getMessage());
-        }
-
-        try {
-            Case.transfer(from, to, 0.0);
-        } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
-            System.out.println("Ошибка: " + e.getMessage());
-        }
-
-        try {
-            Case.transfer(from, to, -1.0);
-        } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+        for (double amount : new double[]{30.0, 200.0, 0.0, -1.0}) {
+            try {
+                double[] res = Case.transfer(from, to, amount);
+                from = res[0];
+                to = res[1];
+            } catch (InvalidTransferAmountException | InsufficientBalanceException e) {
+                System.out.println("Ошибка: " + e.getMessage());
+            }
         }
 
         System.out.printf("Баланс отправителя: %.2f%n", from);
         System.out.printf("Баланс получателя: %.2f%n%n", to);
 
         // 10. Сервис оценки товара
-        System.out.println("10. Сервис оценки товара:");
-        System.out.println(Case.rateProduct("5"));
-        System.out.println(Case.rateProduct("abc"));
-        System.out.println(Case.rateProduct("7"));
-        System.out.println(Case.rateProduct("0"));
-
-// Демонстрация использования с int
         try {
-            String result = Case.rateProduct(5);
-            System.out.println(result);
+            System.out.println(Case.rateProduct(1));
+            System.out.println(Case.rateProduct(9)); // выбросит исключение
         } catch (InvalidRatingException e) {
-            System.out.println(e.getMessage());
+            System.out.printf("Ошибка: %s%n", e.getMessage());
         }
     }
 }
