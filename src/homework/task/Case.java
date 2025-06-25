@@ -5,7 +5,7 @@ import homework.exception.InvalidTransferAmountException;
 import homework.exception.InsufficientBalanceException;
 import homework.exception.ItemNotFoundException;
 import homework.exception.NegativeDepositException;
-import homework.exception.LoginException;
+import homework.exception.LoginFailedException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,9 +77,9 @@ public class Case {
         }
     }
 
-    public static String login(String username, String password) throws LoginException {
+    public static String login(String username, String password) throws LoginFailedException {
         if (!"admin".equals(username) || !"1234".equals(password)) {
-            throw new LoginException(username);
+            throw new LoginFailedException("Неверный логин или пароль.");
         }
         return "Успешный вход";
     }

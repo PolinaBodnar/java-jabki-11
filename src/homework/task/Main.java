@@ -5,7 +5,7 @@ import homework.exception.InvalidTransferAmountException;
 import homework.exception.InsufficientBalanceException;
 import homework.exception.ItemNotFoundException;
 import homework.exception.NegativeDepositException;
-import homework.exception.LoginException;
+import homework.exception.LoginFailedException;
 
 import java.util.List;
 
@@ -81,13 +81,24 @@ public class Main {
 
         // 8. Система логина
         System.out.println("8. Система логина:");
-        for (String[] loginData : List.of(new String[]{"admin", "pass"}, new String[]{"admin", "1234"})) {
+
+        List<String[]> loginAttempts = List.of(
+                new String[]{"admin", "pass"},
+                new String[]{"admin", "1234"}
+        );
+
+        for (String[] credentials : loginAttempts) {
+            String username = credentials[0];
+            String password = credentials[1];
+
             try {
-                System.out.println(Case.login(loginData[0], loginData[1]));
-            } catch (LoginException e) {
+                String result = Case.login(username, password);
+                System.out.println(result);
+            } catch (LoginFailedException e) {
                 System.out.printf("Ошибка: %s%n", e.getMessage());
             }
         }
+
         System.out.println();
 
         // 9. Банковский перевод с валидацией
